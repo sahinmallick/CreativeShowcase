@@ -4,6 +4,7 @@ import { ApiError } from "../utils/api-error.js";
 import { emailVerificationMailGenContent, sendMail } from "../utils/mail.js";
 import uploadToCloudinary from "../utils/uploadToCloudinary.js";
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
     const { fullname, email, phone, username, password, bio } = req.body;
@@ -103,7 +104,9 @@ export const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select(
+            "-password -emailVerificationToken -emailVerificationExpires",
+        );
 
         if (!user) {
             throw new ApiError(400, "No user exists!");
@@ -132,7 +135,7 @@ export const loginUser = async (req, res) => {
 
         return res.status(200).json(
             new ApiResponse(200, "User logged in successfully!", {
-                accessToken,
+                user,
             }),
         );
     } catch (error) {

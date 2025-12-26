@@ -27,7 +27,7 @@ authRouter.post(
     register,
 );
 authRouter.get("/verify-user/:token", verifyUser);
-authRouter.post("/login", loginUser);
+authRouter.post("/login", userLoginValidator(), validator, loginUser);
 authRouter.post(
     "/logout",
     isLoggedIn,

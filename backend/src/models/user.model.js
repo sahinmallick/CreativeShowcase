@@ -3,67 +3,70 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
-const userSchema = mongoose.Schema({
-    avatar: {
-        url: {
+const userSchema = mongoose.Schema(
+    {
+        avatar: {
+            url: {
+                type: String,
+                default: "https://avatar.iran.liara.run/public/boy",
+            },
+        },
+        fullname: {
             type: String,
-            default: "https://avatar.iran.liara.run/public/boy",
+            required: true,
+            trim: true,
+        },
+        username: {
+            type: String,
+            required: true,
+            trim: true,
+            lowercase: true,
+            unique: true,
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            trim: true,
+            lowercase: true,
+        },
+        bio: {
+            type: String,
+            trim: true,
+        },
+        phone: {
+            type: String,
+            trim: true,
+            required: true,
+        },
+        password: {
+            type: String,
+            required: [true, "Password is required!"],
+        },
+        role: {
+            type: String,
+            enum: ["ARTIST", "ADMIN", "ORGANIZATION"],
+            default: "ARTIST",
+        },
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
+        forgotPasswordToken: {
+            type: String,
+        },
+        forgotPasswordExpires: {
+            type: Date,
+        },
+        emailVerificationToken: {
+            type: String,
+        },
+        emailVerificationExpires: {
+            type: Date,
         },
     },
-    fullname: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    username: {
-        type: String,
-        required: true,
-        trim: true,
-        lowercase: true,
-        unique: true,
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-        lowercase: true,
-    },
-    bio: {
-        type: String,
-        trim: true,
-    },
-    phone: {
-        type: String,
-        trim: true,
-        required: true,
-    },
-    password: {
-        type: String,
-        required: [true, "Password is required!"],
-    },
-    role: {
-        type: String,
-        enum: ["ARTIST", "ADMIN", "ORGANIZATION"],
-        default: "ARTIST",
-    },
-    isVerified: {
-        type: Boolean,
-        default: false,
-    },
-    forgotPasswordToken: {
-        type: String,
-    },
-    forgotPasswordExpires: {
-        type: Date,
-    },
-    emailVerificationToken: {
-        type: String,
-    },
-    emailVerificationExpires: {
-        type: Date,
-    },
-});
+    { timestamps: true },
+);
 
 userSchema.pre("save", async function () {
     if (!this.isModified("password")) return;

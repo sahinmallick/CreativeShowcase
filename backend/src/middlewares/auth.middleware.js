@@ -1,6 +1,8 @@
 import { User } from "../models/user.model.js";
+import { ApiError } from "../utils/api-error.js";
+import jwt from "jsonwebtoken";
 
-export const isLoggedIn = async (req, res) => {
+export const isLoggedIn = async (req, res, next) => {
     try {
         const token =
             req.cookies?.accessToken ||
@@ -10,8 +12,8 @@ export const isLoggedIn = async (req, res) => {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET_ACCESS_TOKEN);
 
-        const user = await User.findById(decoded?.accessToken._id).select(
-            "-password -refressToken -forgotPasswordToken -emailVerificationToken",
+        const user = await User.findById(decoded?.id).select(
+            "-password -forgotPasswordToken -emailVerificationToken",
         );
 
         if (!user) {
