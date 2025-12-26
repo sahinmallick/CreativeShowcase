@@ -1,27 +1,32 @@
-import { User } from "../models/user.model";
-
+import { User } from "../models/user.model.js";
 
 export const isLoggedIn = async (req, res) => {
     try {
-        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
+        const token =
+            req.cookies?.accessToken ||
+            req.header("Authorization")?.replace("Bearer ", "");
 
-        if (!token) throw new ApiError(400, "Unauthorized request!")
+        if (!token) throw new ApiError(400, "Unauthorized request!");
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET_ACCESS_TOKEN)
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_ACCESS_TOKEN);
 
-        const user = await User.findById(decoded?.accessToken._id).select("-password -refressToken -forgotPasswordToken -emailVerificationToken")
+        const user = await User.findById(decoded?.accessToken._id).select(
+            "-password -refressToken -forgotPasswordToken -emailVerificationToken",
+        );
 
         if (!user) {
             throw new ApiError(401, "Invalid Access Token!");
         }
 
         req.user = user;
-        next()
-
+        return next();
     } catch (error) {
         if (error.name === "TokenExpiredError") {
-            throw new ApiError(401, "Access token expired! Please login again.");
+            throw new ApiError(
+                401,
+                "Access token expired! Please login again.",
+            );
         }
         throw new ApiError(401, error?.message || "Invalid access token!");
     }
-}
+};
