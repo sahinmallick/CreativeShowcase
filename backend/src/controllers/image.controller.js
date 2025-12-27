@@ -62,7 +62,10 @@ export const getImage = async (req, res) => {
 
 export const getImages = async (req, res) => {
     try {
-        const images = await Image.find();
+        const images = await Image.find().populate({
+            path: "uploadedBy",
+            select: "fullname username email",
+        });
         if (!images) {
             throw new ApiError(401, "No images found!");
         }

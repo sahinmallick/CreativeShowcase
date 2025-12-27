@@ -21,7 +21,7 @@ export const register = async (req, res) => {
 
         const cloudinaryResult = await uploadToCloudinary(
             req.file.buffer,
-            "creative-showcase",
+            "creative-showcase-avatar",
         );
 
         const user = await User.create({
