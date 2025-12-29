@@ -19,18 +19,24 @@ export const register = async (req, res) => {
         const token = crypto.randomBytes(32).toString("hex");
         const tokenExpiry = Date.now() + 30 * 60 * 1000;
 
-        const cloudinaryResult = await uploadToCloudinary(
-            req.file.buffer,
-            "creative-showcase-avatar",
-        );
+        let avatarData;
+
+        if (req.file) {
+            const cloudinaryResult = await uploadToCloudinary(
+                req.file.buffer,
+                "creative-showcase-avatar",
+            );
+
+            avatarData = {
+                url: cloudinaryResult.secure_url,
+            };
+        }
 
         const user = await User.create({
             fullname,
             username,
             email,
-            avatar: {
-                url: cloudinaryResult.secure_url,
-            },
+            avatar: avatarData,
             bio,
             phone,
             password,
@@ -109,14 +115,18 @@ export const loginUser = async (req, res) => {
         );
 
         if (!user) {
-            throw new ApiError(400, "No user exists!");
+            throw new ApiResponse(400, "No user exists!");
         }
 
         if (!user.isVerified) {
-            throw new ApiError(
-                400,
-                "Please verify your account first to log in!",
-            );
+            return res
+                .status(403)
+                .json(
+                    new ApiResponse(
+                        403,
+                        "Please verify your account first to log in!",
+                    ),
+                );
         }
 
         const accessToken = jwt.sign(

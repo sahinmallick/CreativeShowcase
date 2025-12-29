@@ -21,20 +21,14 @@ const authRouter = express.Router();
 
 authRouter.post(
     "/register",
-    upload.single("image"),
+    upload.single("avatar"),
     userRegistrationValidator(),
     validator,
     register,
 );
 authRouter.get("/verify-user/:token", verifyUser);
 authRouter.post("/login", userLoginValidator(), validator, loginUser);
-authRouter.post(
-    "/logout",
-    isLoggedIn,
-    userLoginValidator(),
-    validator,
-    logoutUser,
-);
+authRouter.get("/logout", isLoggedIn, logoutUser);
 authRouter.post("/reset-password/:token", resetPassword);
 authRouter.post(
     "/change-password",
