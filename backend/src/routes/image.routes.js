@@ -18,6 +18,6 @@ imageRouter.post(
 );
 imageRouter.get("/get-image/:id", getImage);
 imageRouter.get("/get-images", getImages);
-imageRouter.get("/user-images",isLoggedIn, userImages);
+imageRouter.get("/user-images", isLoggedIn, userImages);
 
 export default imageRouter;

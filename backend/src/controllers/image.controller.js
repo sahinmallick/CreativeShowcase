@@ -92,9 +92,9 @@ export const userImages = async (req, res, next) => {
             .sort({ createdAt: -1 });
 
         if (images.length === 0) {
-            return res.status(200).json(
-                new ApiResponse(200, "No images found", [])
-            );
+            return res
+                .status(200)
+                .json(new ApiResponse(200, "No images found", []));
         }
         return res
             .status(200)

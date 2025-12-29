@@ -7,13 +7,23 @@ export const useAuthStore = create((set) => ({
   isSigninUp: false,
   isLogginIn: false,
   isCheckingAuth: false,
+  isAuthenticated: false,
 
   checkAuth: async () => {
     set({ isCheckingAuth: true });
     try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) return;
+
+      axiosInstance.defaults.headers.common['Authorization'] =
+        `Bearer ${token}`;
+
       const res = await axiosInstance.get('/auth/me');
-      console.log('Checking Auth Response: ', res.data);
-      set({ authUser: res.data.user });
+
+      set({
+        authUser: res.data.data.user,
+        isAuthenticated: true,
+      });
     } catch (error) {
       console.log('Error checking auth!', error);
       set({ authUser: null });
@@ -22,10 +32,10 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  signup: async (data) => {
+  signup: async (formData) => {
     set({ isSigninUp: true });
     try {
-      const res = await axiosInstance.post('/auth/register', data);
+      const res = await axiosInstance.post('/auth/register', formData);
       set({ authUser: res.data.user });
       toast.success(res.data.message);
     } catch (error) {
@@ -41,7 +51,8 @@ export const useAuthStore = create((set) => ({
     set({ isLogginIn: true });
     try {
       const res = await axiosInstance.post('/auth/login', data);
-      set({ authUser: res.data.user });
+      localStorage.setItem('accessToken', res.data.accessToken);
+      set({ authUser: res.data.data.user, isAuthenticated: true });
       toast.success(res.data.message);
     } catch (error) {
       console.log('Error Logging user!', error);
@@ -56,7 +67,13 @@ export const useAuthStore = create((set) => ({
     set({ isLogginIn: true });
     try {
       const res = await axiosInstance.get('/auth/logout');
-      set({ authUser: null });
+      localStorage.removeItem('accessToken');
+      delete axiosInstance.defaults.headers.common['Authorization'];
+
+      set({
+        authUser: null,
+        isAuthenticated: false,
+      });
       toast.success(res.data.message);
     } catch (error) {
       console.log('Error while log out user!', error);
