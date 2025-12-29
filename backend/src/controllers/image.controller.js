@@ -79,3 +79,30 @@ export const getImages = async (req, res) => {
         });
     }
 };
+
+export const userImages = async (req, res, next) => {
+    try {
+        const userId = req.user?._id;
+
+        if (!userId) {
+            return next(new ApiError(401, "Unauthorized request"));
+        }
+        const images = await Image.find({ uploadedBy: userId })
+            .populate("uploadedBy", "fullname username email avatar")
+            .sort({ createdAt: -1 });
+
+        if (images.length === 0) {
+            return res.status(200).json(
+                new ApiResponse(200, "No images found", [])
+            );
+        }
+        return res
+            .status(200)
+            .json(new ApiResponse(200, "Images fetched succesfully!", images));
+    } catch (error) {
+        console.log(`Error while fetching images ${error}`);
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
+};
