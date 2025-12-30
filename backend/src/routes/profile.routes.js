@@ -3,6 +3,6 @@ import { profile } from "../controllers/profile.controller.js";
 
 const profileRouter = express.Router();
 
-profileRouter.get("/:id", profile);
+profileRouter.get("/:username", profile);
 
 export default profileRouter;

@@ -1,6 +1,7 @@
 import express from "express";
 import upload from "../middlewares/multer.middleware.js";
 import {
+    deleteImage,
     getImage,
     getImages,
     uploadImage,
@@ -19,5 +20,6 @@ imageRouter.post(
 imageRouter.get("/get-image/:id", getImage);
 imageRouter.get("/get-images", getImages);
 imageRouter.get("/user-images", isLoggedIn, userImages);
+imageRouter.delete("/delete-image/:id", isLoggedIn, deleteImage);
 
 export default imageRouter;

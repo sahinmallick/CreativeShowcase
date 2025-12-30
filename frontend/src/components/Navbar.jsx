@@ -1,10 +1,11 @@
 import React from 'react';
 import { useAuthStore } from '../store/useAuthStore';
 import logo from '../assets/logo.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const { authUser, logout, isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
 
   console.log('AUTH_USER', authUser);
 
@@ -46,14 +47,28 @@ const Navbar = () => {
                   tabIndex={0}
                   className="menu menu-sm dropdown-content mt-3 w-52 rounded-xl bg-base-100 shadow-lg border border-base-300"
                 >
-                  <li className="px-2 py-1 text-xs opacity-60">Account</li>
-                  <li>
-                    <Link to="/profile" className="rounded-lg">
-                      Profile
-                    </Link>
-                  </li>
-                  <li>
-                    <a className="rounded-lg">Settings</a>
+                  <li
+                    onClick={() => navigate('/profile')}
+                    className="px-3 py-3 rounded-lg bg-base-200/60 mb-1"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden">
+                        <img
+                          src={authUser?.avatar?.url}
+                          alt="Avatar"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold leading-tight">
+                          {authUser?.fullname}
+                        </span>
+                        <span className="text-xs opacity-60 truncate max-w-[180px]">
+                          {authUser?.email}
+                        </span>
+                      </div>
+                    </div>
                   </li>
                   <div className="divider my-1"></div>
                   <li>

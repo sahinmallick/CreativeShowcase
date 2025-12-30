@@ -4,10 +4,18 @@ import UserImageList from '../components/UserImageList';
 import { useEffect } from 'react';
 import { useImageStore } from '../store/useImageStore';
 import { useAuthStore } from '../store/useAuthStore';
+import UploadImageSection from '../components/UploadImageSection';
 
 const PrivateDashboard = () => {
   const { authUser, logout, isAuthenticated } = useAuthStore();
-  const { userImagesFetch, userImages, isLoading, isFetched } = useImageStore();
+  const {
+    userImagesFetch,
+    userImages,
+    isLoading,
+    isFetched,
+    deleteImage,
+    isDeleting,
+  } = useImageStore();
 
   useEffect(() => {
     userImagesFetch();
@@ -27,10 +35,13 @@ const PrivateDashboard = () => {
         }}
       />
       <div>
+        <UploadImageSection />
         <UserImageList
           userImages={userImages}
           isLoading={isLoading}
           isFetched={isFetched}
+          deleteImage={deleteImage}
+          isDeleting={isDeleting}
         />
       </div>
     </div>

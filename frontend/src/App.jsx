@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Login from './pages/Login';
 import Layout from './layout/Layout';
@@ -9,9 +9,12 @@ import HomePage from './pages/HomePage';
 import PublicProfile from './pages/PublicProfile';
 import PrivateDashboard from './pages/PrivateDashboard';
 import { useEffect } from 'react';
+import NotFound from './pages/NotFound';
 
 const App = () => {
   const { authUser, checkAuth } = useAuthStore();
+
+  const { username } = useParams();
 
   useEffect(() => {
     checkAuth();
@@ -36,6 +39,7 @@ const App = () => {
             path="/profile"
             element={authUser ? <PrivateDashboard /> : <Navigate to="/" />}
           />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </div>

@@ -1,4 +1,20 @@
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/useAuthStore';
+
 export const ImageCard = ({ item }) => {
+  const navigate = useNavigate();
+
+  const { authUser } = useAuthStore();
+
+  const publicProfile = `profile/${item.uploadedBy.username}`;
+  const handleUsernameClick = () => {
+    if (authUser?.username === item.uploadedBy.username) {
+      navigate('/profile');
+    } else {
+      navigate(publicProfile);
+    }
+  };
+
   return (
     <article className="group relative overflow-hidden rounded-xl border border-base-300/40 bg-base-100 transition hover:shadow-xl">
       <div className="relative overflow-hidden">
@@ -10,7 +26,6 @@ export const ImageCard = ({ item }) => {
             className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />
         </a>
-
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-80 transition" />
 
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition" />
@@ -23,7 +38,13 @@ export const ImageCard = ({ item }) => {
               className="h-7 w-7 rounded-full object-cover border border-white/40"
             />
             <span className="text-xs font-medium opacity-90">
-              @{item.uploadedBy.username}
+              <button
+                type="button"
+                onClick={() => handleUsernameClick()}
+                className="text-xs font-medium opacity-90 hover:underline cursor-pointer"
+              >
+                @{item.uploadedBy.username}
+              </button>
             </span>
           </div>
 

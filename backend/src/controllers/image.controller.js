@@ -106,3 +106,20 @@ export const userImages = async (req, res, next) => {
         });
     }
 };
+
+export const deleteImage = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        await Image.findByIdAndDelete(id)
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, "Image deleted succesfully!"));
+    } catch (error) {
+        console.log(`Error while deleting images ${error}`);
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
+};

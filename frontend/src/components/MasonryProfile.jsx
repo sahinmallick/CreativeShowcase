@@ -1,21 +1,14 @@
 import { useEffect } from 'react';
-import { useImageStore } from '../store/useImageStore';
-import { ImageCard } from './ImageCard';
 import { useRef } from 'react';
 import { useState } from 'react';
+import GalleryImageCard from './GalleryImageCard';
 
 const CHUNK_SIZE = 9;
 
-const MasonryProfile = () => {
-  const { images, fetchImages, isLoading, isFetched } = useImageStore();
-
+const MasonryProfile = ({ images, isLoading }) => {
+  console.log(images);
   const [visibleCount, setVisibleCount] = useState(CHUNK_SIZE);
   const loaderRef = useRef(null);
-
-  useEffect(() => {
-    if (!isFetched) fetchImages();
-  }, []);
-
   useEffect(() => {
     if (!loaderRef.current) return;
 
@@ -34,11 +27,11 @@ const MasonryProfile = () => {
 
   return (
     <>
-      <div className="p-4 lg:p-24">
+      <div className="p-4 lg:p-12">
         <div className="columns-2 sm:columns-2 lg:columns-4 gap-4 md:gap-6">
           {images.map((item) => (
             <div key={item._id} className="mb-4 md:mb-6 break-inside-avoid">
-              <ImageCard item={item} />
+              <GalleryImageCard item={item} />
             </div>
           ))}
         </div>

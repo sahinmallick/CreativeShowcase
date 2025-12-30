@@ -4,23 +4,25 @@ import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 
 export const profile = async (req, res) => {
-    const { id } = req.params;
+    const { username } = req.params;
 
-    if (!id) {
-        throw new ApiError(401, "Invalid link!");
+    if (!username) {
+        throw new ApiError(401, "Invalid username!");
     }
 
     try {
-        const user = await User.findById(id).select(
+        const user = await User.findOne({username}).select(
             "-password -refreshToken -__v",
         );
 
         if (!user) {
-            throw new ApiError(404, "User not found!");
+            return res.status(404).json(
+            new ApiResponse(404, "User not found!"))
         }
 
+
         const images = await Image.find({
-            uploadedBy: id,
+            uploadedBy: user._id,
         })
             .sort({ createdAt: -1 })
             .select("title description image createdAt");

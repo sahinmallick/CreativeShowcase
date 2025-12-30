@@ -1,7 +1,17 @@
 import { Delete, DeleteIcon, LucideDelete, Trash2Icon } from 'lucide-react';
 import React from 'react';
 
-const UserImageList = ({ userImages, isLoading, isFetched }) => {
+const UserImageList = ({
+  userImages,
+  isLoading,
+  isFetched,
+  deleteImage,
+  isDeleting,
+}) => {
+  const handleDelete = async (id) => {
+    await deleteImage(id);
+  };
+
   return (
     <>
       <ul className="list w-full bg-base-100 rounded-xl shadow-sm p-12 lg:24">
@@ -35,7 +45,12 @@ const UserImageList = ({ userImages, isLoading, isFetched }) => {
                 </p>
               </div>
 
-              <button className="btn btn-sm" title="Delete">
+              <button
+                onClick={() => handleDelete(img._id)}
+                disabled={isDeleting}
+                className="btn btn-sm"
+                title="Delete"
+              >
                 <Trash2Icon className="h-4 w-4 text-error" />
               </button>
             </li>
