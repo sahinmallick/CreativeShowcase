@@ -11,9 +11,11 @@ const port = process.env.PORT || 4000;
 
 dbConnect()
     .then(() => {
-        app.listen(port, () => {
-            console.log(`Server running on PORT ${port}`);
-        });
+        if (!process.env.VERCEL) {
+            app.listen(port, () => {
+                console.log(`Server running on PORT ${port}`);
+            });
+        }
     })
     .catch((err) => {
         console.error(`Database connection error!!`);
