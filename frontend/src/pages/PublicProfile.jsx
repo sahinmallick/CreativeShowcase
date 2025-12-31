@@ -23,8 +23,6 @@ const PublicProfile = () => {
     }
   }, [username, fetchUserProfile]);
 
-  console.log(userProfile, username);
-
   if (isNotFound) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">

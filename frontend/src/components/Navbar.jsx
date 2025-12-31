@@ -7,8 +7,6 @@ const Navbar = () => {
   const { authUser, logout, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
 
-  console.log('AUTH_USER', authUser);
-
   return (
     <nav className="sticky top-0 z-50 w-full py-4">
       <div className="mx-auto max-w-5xl px-4">

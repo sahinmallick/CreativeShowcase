@@ -6,7 +6,6 @@ import GalleryImageCard from './GalleryImageCard';
 const CHUNK_SIZE = 9;
 
 const MasonryProfile = ({ images, isLoading }) => {
-  console.log(images);
   const [visibleCount, setVisibleCount] = useState(CHUNK_SIZE);
   const loaderRef = useRef(null);
   useEffect(() => {
