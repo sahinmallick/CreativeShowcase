@@ -1,34 +1,42 @@
+import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/api-error.js";
-import jwt from "jsonwebtoken";
 
 export const isLoggedIn = async (req, res, next) => {
-    try {
-        const token =
-            req.cookies?.accessToken ||
-            req.header("Authorization")?.replace("Bearer ", "");
+  try {
+    const authHeader = req.headers.authorization;
 
-        if (!token) throw new ApiError(400, "Unauthorized request!");
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET_ACCESS_TOKEN);
-
-        const user = await User.findById(decoded?.id).select(
-            "-password -forgotPasswordToken -emailVerificationToken",
-        );
-
-        if (!user) {
-            throw new ApiError(401, "Invalid Access Token!");
-        }
-
-        req.user = user;
-        return next();
-    } catch (error) {
-        if (error.name === "TokenExpiredError") {
-            throw new ApiError(
-                401,
-                "Access token expired! Please login again.",
-            );
-        }
-        throw new ApiError(401, error?.message || "Invalid access token!");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return next(new ApiError(401, "Unauthorized: No token provided"));
     }
+
+    const token = authHeader.split(" ")[1];
+
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET_ACCESS_TOKEN
+    );
+
+    const user = await User.findById(decoded.id).select(
+      "-password -forgotPasswordToken -emailVerificationToken"
+    );
+
+    if (!user) {
+      return next(new ApiError(401, "Invalid access token"));
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return next(
+        new ApiError(401, "Access token expired. Please login again.")
+      );
+    }
+
+    return next(
+      new ApiError(401, error.message || "Unauthorized request")
+    );
+  }
 };
+
