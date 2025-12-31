@@ -1,89 +1,80 @@
-import { create } from 'zustand';
-import { axiosInstance } from '../lib/axios.js';
-import { toast } from 'react-hot-toast';
+import { create } from "zustand";
+import { axiosInstance } from "../lib/axios";
+import { toast } from "react-hot-toast";
 
 export const useAuthStore = create((set) => ({
   authUser: null,
+  isAuthenticated: false,
   isSigninUp: false,
   isLogginIn: false,
-  isCheckingAuth: false,
-  isAuthenticated: false,
+  isCheckingAuth: true,
 
   checkAuth: async () => {
-    set({ isCheckingAuth: true });
     try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) return;
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        set({ authUser: null, isAuthenticated: false });
+        return;
+      }
 
-      axiosInstance.defaults.headers.common['Authorization'] =
-        `Bearer ${token}`;
-
-      const res = await axiosInstance.get('/auth/me');
+      const res = await axiosInstance.get("/auth/me");
 
       set({
         authUser: res.data.data.user,
         isAuthenticated: true,
       });
     } catch (error) {
-      console.log('Error checking auth!', error);
-      set({ authUser: null });
+      localStorage.removeItem("accessToken");
+      set({
+        authUser: null,
+        isAuthenticated: false,
+      });
     } finally {
       set({ isCheckingAuth: false });
-    }
-  },
-
-  signup: async (formData) => {
-    set({ isSigninUp: true });
-    try {
-      const res = await axiosInstance.post('/auth/register', formData);
-      set({ authUser: res.data.user });
-      toast.success(res.data.message);
-    } catch (error) {
-      console.log('Error registering user!', error);
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      set({ authUser: null });
-    } finally {
-      set({ isSigninUp: false });
     }
   },
 
   login: async (data) => {
     set({ isLogginIn: true });
     try {
-      const res = await axiosInstance.post('/auth/login', data);
-      localStorage.setItem('accessToken', res.data.accessToken);
-      set({ authUser: res.data.data.user, isAuthenticated: true });
+      const res = await axiosInstance.post("/auth/login", data);
+
+      localStorage.setItem("accessToken", res.data.accessToken);
+
+      set({
+        authUser: res.data.data.user,
+        isAuthenticated: true,
+      });
+
       toast.success(res.data.message);
     } catch (error) {
-      console.log('Error Logging user!', error);
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      set({ authUser: null });
+      toast.error(error.response?.data?.message || "Login failed");
+      set({ authUser: null, isAuthenticated: false });
     } finally {
       set({ isLogginIn: false });
     }
   },
 
-  logout: async () => {
-    set({ isLogginIn: true });
+  signup: async (formData) => {
+    set({ isSigninUp: true });
     try {
-      const res = await axiosInstance.get('/auth/logout');
-      localStorage.removeItem('accessToken');
-      delete axiosInstance.defaults.headers.common['Authorization'];
+      const res = await axiosInstance.post("/auth/register", formData);
+      toast.success(res.data.message);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Signup failed");
+    } finally {
+      set({ isSigninUp: false });
+    }
+  },
 
+  logout: async () => {
+    try {
+      await axiosInstance.get("/auth/logout");
+    } finally {
+      localStorage.removeItem("accessToken");
       set({
         authUser: null,
         isAuthenticated: false,
-      });
-      toast.success(res.data.message);
-    } catch (error) {
-      console.log('Error while log out user!', error);
-      set({
-        authUser: null,
-      });
-    } finally {
-      set({
-        authUser: null,
-        isLogginIn: false,
       });
     }
   },
@@ -91,13 +82,10 @@ export const useAuthStore = create((set) => ({
   changePassword: async (data) => {
     set({ isLogginIn: true });
     try {
-      const res = await axiosInstance.post('/auth/change-password', data);
-      set({ authUser: res.data.user });
+      const res = await axiosInstance.post("/auth/change-password", data);
       toast.success(res.data.message);
     } catch (error) {
-      console.log('Error changing password user!', error);
-      toast.error(error.response?.data?.message || 'Something went wrong');
-      set({ authUser: null });
+      toast.error(error.response?.data?.message || "Password change failed");
     } finally {
       set({ isLogginIn: false });
     }

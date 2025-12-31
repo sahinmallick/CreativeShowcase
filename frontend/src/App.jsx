@@ -12,38 +12,50 @@ import { useEffect } from 'react';
 import NotFound from './pages/NotFound';
 
 const App = () => {
-  const { authUser, checkAuth } = useAuthStore();
-
-  const { username } = useParams();
+  const { authUser, isAuthenticated, checkAuth, isCheckingAuth } = useAuthStore();
 
   useEffect(() => {
     checkAuth();
   }, []);
 
+  if (isCheckingAuth) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg" />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col items-center justify-start">
+    <>
       <Toaster />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
+
           <Route
             path="/login"
-            element={!authUser ? <Login /> : <Navigate to="/" replace />}
+            element={!isAuthenticated ? <Login /> : <Navigate to="/" />}
           />
+
           <Route
             path="/signup"
-            element={!authUser ? <SignUp /> : <Navigate to="/" replace />}
+            element={!isAuthenticated ? <SignUp /> : <Navigate to="/" />}
           />
+
           <Route path="/profile/:username" element={<PublicProfile />} />
+
           <Route
             path="/profile"
-            element={authUser ? <PrivateDashboard /> : <Navigate to="/" />}
+            element={isAuthenticated ? <PrivateDashboard /> : <Navigate to="/" />}
           />
+
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
-    </div>
+    </>
   );
 };
+
 
 export default App;
