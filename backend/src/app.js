@@ -22,6 +22,7 @@ app.use(
         origin: [
             "http://localhost:5173",
             "https://creativeshowcase.vercel.app",
+            "https://creativeshowcase.sahinmallick.tech/"
         ],
         credentials: true,
     }),
