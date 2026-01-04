@@ -118,7 +118,7 @@ const LogInPage = () => {
           </button>
         </form>
         <div className="border-t border-neutral-200 px-6 py-4 text-center text-xs text-neutral-500">
-          Don’t have an account?{' '}
+          Doesn’t have an account?{' '}
           <Link to="/signup" className="text-neutral-900 underline">
             Sign up
           </Link>

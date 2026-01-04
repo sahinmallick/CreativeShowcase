@@ -81,7 +81,6 @@ const PublicProfile = () => {
           name: userProfile.fullname,
           username: userProfile.username,
           email: userProfile.email,
-          phone: userProfile.phone,
           bio: userProfile.bio,
           role: userProfile.role,
           avatar: userProfile.avatar.url,

@@ -41,11 +41,6 @@ const UserProfileCard = ({ user }) => {
               {user.email}
             </p>
 
-            <p>
-              <span className="font-medium text-base-content">Phone:</span>{' '}
-              {user.phone}
-            </p>
-
             <p className="leading-relaxed">
               <span className="font-medium text-base-content">Bio:</span>{' '}
               {user.bio}
