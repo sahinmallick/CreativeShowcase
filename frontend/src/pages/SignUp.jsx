@@ -55,8 +55,10 @@ const SignUpPage = () => {
         formData.append('avatar', data.avatar);
       }
 
-      await signup(formData);
-      navigate('/login');
+      const signup = await signup(formData);
+      if(signup){
+        navigate('/login');
+      }
     } catch (error) {
       console.error('SignUp failed:', error);
     }
