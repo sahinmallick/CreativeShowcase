@@ -36,6 +36,7 @@ export const sendMail = async (options) => {
         const info = await transporter.sendMail({
             from: `"Creative Showcase" <${process.env.EMAIL_FROM}>`,
             to: options.email,
+            replyTo: process.env.EMAIL_FROM,
             subject: options.subject,
             text: emailText,
             html: emailBody,
