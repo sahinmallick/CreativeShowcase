@@ -12,7 +12,8 @@ import { useEffect } from 'react';
 import NotFound from './pages/NotFound';
 
 const App = () => {
-  const { authUser, isAuthenticated, checkAuth, isCheckingAuth } = useAuthStore();
+  const { authUser, isAuthenticated, checkAuth, isCheckingAuth } =
+    useAuthStore();
 
   useEffect(() => {
     checkAuth();
@@ -47,7 +48,9 @@ const App = () => {
 
           <Route
             path="/profile"
-            element={isAuthenticated ? <PrivateDashboard /> : <Navigate to="/" />}
+            element={
+              isAuthenticated ? <PrivateDashboard /> : <Navigate to="/" />
+            }
           />
 
           <Route path="*" element={<NotFound />} />
@@ -56,6 +59,5 @@ const App = () => {
     </>
   );
 };
-
 
 export default App;

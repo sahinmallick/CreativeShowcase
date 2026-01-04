@@ -62,9 +62,6 @@ const Navbar = () => {
                         <span className="text-sm font-semibold leading-tight">
                           {authUser?.fullname}
                         </span>
-                        <span className="text-xs opacity-60 truncate max-w-[180px]">
-                          {authUser?.email}
-                        </span>
                       </div>
                     </div>
                   </li>

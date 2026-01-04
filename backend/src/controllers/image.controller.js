@@ -111,7 +111,7 @@ export const deleteImage = async (req, res) => {
     try {
         const { id } = req.params;
 
-        await Image.findByIdAndDelete(id)
+        await Image.findByIdAndDelete(id);
 
         return res
             .status(200)

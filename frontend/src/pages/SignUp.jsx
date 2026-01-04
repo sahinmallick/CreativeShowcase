@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Code,
   Eye,
@@ -31,10 +31,11 @@ const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { isSigninUp, signup } = useAuthStore();
   const [avatarPreview, setAvatarPreview] = useState(null);
-
   const { register, handleSubmit, setValue } = useForm({
     resolver: zodResolver(SignUpSchema),
   });
+
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
@@ -55,7 +56,7 @@ const SignUpPage = () => {
       }
 
       await signup(formData);
-      <Navigate to="/login" />;
+      navigate('/login');
     } catch (error) {
       console.error('SignUp failed:', error);
     }

@@ -13,7 +13,7 @@ export const register = async (req, res) => {
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
-            throw new ApiError(400, "User already exists!");
+            new ApiResponse(400, "User already exists!");
         }
 
         const token = crypto.randomBytes(32).toString("hex");
@@ -107,50 +107,51 @@ export const verifyUser = async (req, res) => {
 };
 
 export const loginUser = async (req, res, next) => {
-  const { email, password } = req.body;
+    const { email, password } = req.body;
 
-  try {
-    const user = await User.findOne({ email });
+    try {
+        const user = await User.findOne({ email });
 
-    if (!user) {
-      return next(new ApiError(400, "Invalid email or password"));
+        if (!user) {
+            return next(new ApiError(400, "Invalid email or password"));
+        }
+
+        const isPasswordValid = await user.isPasswordCorrect(password);
+        if (!isPasswordValid) {
+            return next(new ApiError(400, "Invalid email or password"));
+        }
+
+        if (!user.isVerified) {
+            return res
+                .status(403)
+                .json(
+                    new ApiResponse(
+                        403,
+                        "Please verify your account first to log in!",
+                    ),
+                );
+        }
+
+        const accessToken = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET_ACCESS_TOKEN,
+            { expiresIn: "30d" },
+        );
+
+        const safeUser = await User.findById(user._id).select(
+            "-password -forgotPasswordToken -emailVerificationToken",
+        );
+
+        return res.status(200).json(
+            new ApiResponse(200, "User logged in successfully!", {
+                user: safeUser,
+                accessToken,
+            }),
+        );
+    } catch (error) {
+        return next(new ApiError(500, "Error while logging in user"));
     }
-
-    const isPasswordValid = await user.isPasswordCorrect(password);
-    if (!isPasswordValid) {
-      return next(new ApiError(400, "Invalid email or password"));
-    }
-
-    if (!user.isVerified) {
-      return res.status(403).json(
-        new ApiResponse(
-          403,
-          "Please verify your account first to log in!"
-        )
-      );
-    }
-
-    const accessToken = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET_ACCESS_TOKEN,
-      { expiresIn: "30d" }
-    );
-
-    const safeUser = await User.findById(user._id).select(
-      "-password -forgotPasswordToken -emailVerificationToken"
-    );
-
-    return res.status(200).json(
-      new ApiResponse(200, "User logged in successfully!", {
-        user: safeUser,
-        accessToken,
-      })
-    );
-  } catch (error) {
-    return next(new ApiError(500, "Error while logging in user"));
-  }
 };
-
 
 export const logoutUser = async (req, res) => {
     const { accessToken } = req.cookies;

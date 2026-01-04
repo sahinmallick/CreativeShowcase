@@ -7,19 +7,24 @@ import imageRouter from "./routes/image.routes.js";
 import profileRouter from "./routes/profile.routes.js";
 import dbConnect from "./db/db.js";
 import { ApiError } from "./utils/api-error.js";
+import dotenv from "dotenv";
 
 const app = express();
+
+dotenv.config({
+    path: "./.env",
+});
 
 dbConnect();
 
 app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://creativeshowcase.vercel.app",
-    ],
-    credentials: true,
-  })
+    cors({
+        origin: [
+            "http://localhost:5173",
+            "https://creativeshowcase.vercel.app",
+        ],
+        credentials: true,
+    }),
 );
 
 app.use(express.json());
@@ -32,12 +37,12 @@ app.use("/api/v1", imageRouter);
 app.use("/api/v1/profile", profileRouter);
 
 app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
+    const statusCode = err.statusCode || 500;
 
-  res.status(statusCode).json({
-    success: false,
-    message: err.message || "Internal Server Error",
-  });
+    res.status(statusCode).json({
+        success: false,
+        message: err.message || "Internal Server Error",
+    });
 });
 
 export default app;

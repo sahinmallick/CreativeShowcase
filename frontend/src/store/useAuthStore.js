@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { axiosInstance } from "../lib/axios";
-import { toast } from "react-hot-toast";
+import { create } from 'zustand';
+import { axiosInstance } from '../lib/axios';
+import { toast } from 'react-hot-toast';
 
 export const useAuthStore = create((set) => ({
   authUser: null,
@@ -11,20 +11,20 @@ export const useAuthStore = create((set) => ({
 
   checkAuth: async () => {
     try {
-      const token = localStorage.getItem("accessToken");
+      const token = localStorage.getItem('accessToken');
       if (!token) {
         set({ authUser: null, isAuthenticated: false });
         return;
       }
 
-      const res = await axiosInstance.get("/auth/me");
+      const res = await axiosInstance.get('/auth/me');
 
       set({
         authUser: res.data.data.user,
         isAuthenticated: true,
       });
     } catch (error) {
-      localStorage.removeItem("accessToken");
+      localStorage.removeItem('accessToken');
       set({
         authUser: null,
         isAuthenticated: false,
@@ -37,9 +37,9 @@ export const useAuthStore = create((set) => ({
   login: async (data) => {
     set({ isLogginIn: true });
     try {
-      const res = await axiosInstance.post("/auth/login", data);
-        
-      localStorage.setItem("accessToken", res.data.data.accessToken);
+      const res = await axiosInstance.post('/auth/login', data);
+
+      localStorage.setItem('accessToken', res.data.data.accessToken);
 
       set({
         authUser: res.data.data.user,
@@ -48,7 +48,7 @@ export const useAuthStore = create((set) => ({
 
       toast.success(res.data.message);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Login failed");
+      toast.error(error.response?.data?.message || 'Login failed');
       set({ authUser: null, isAuthenticated: false });
     } finally {
       set({ isLogginIn: false });
@@ -58,10 +58,11 @@ export const useAuthStore = create((set) => ({
   signup: async (formData) => {
     set({ isSigninUp: true });
     try {
-      const res = await axiosInstance.post("/auth/register", formData);
+      const res = await axiosInstance.post('/auth/register', formData);
       toast.success(res.data.message);
+      return true;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Signup failed");
+      toast.error(error.response?.data?.message || 'Signup failed');
     } finally {
       set({ isSigninUp: false });
     }
@@ -69,9 +70,9 @@ export const useAuthStore = create((set) => ({
 
   logout: async () => {
     try {
-      await axiosInstance.get("/auth/logout");
+      await axiosInstance.get('/auth/logout');
     } finally {
-      localStorage.removeItem("accessToken");
+      localStorage.removeItem('accessToken');
       set({
         authUser: null,
         isAuthenticated: false,
@@ -80,14 +81,11 @@ export const useAuthStore = create((set) => ({
   },
 
   changePassword: async (data) => {
-    set({ isLogginIn: true });
     try {
-      const res = await axiosInstance.post("/auth/change-password", data);
+      const res = await axiosInstance.post('/auth/change-password', data);
       toast.success(res.data.message);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Password change failed");
-    } finally {
-      set({ isLogginIn: false });
+      toast.error(error.response?.data?.message || 'Password change failed');
     }
   },
 }));

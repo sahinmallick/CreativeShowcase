@@ -11,15 +11,15 @@ export const profile = async (req, res) => {
     }
 
     try {
-        const user = await User.findOne({username}).select(
+        const user = await User.findOne({ username }).select(
             "-password -refreshToken -__v",
         );
 
         if (!user) {
-            return res.status(404).json(
-            new ApiResponse(404, "User not found!"))
+            return res
+                .status(404)
+                .json(new ApiResponse(404, "User not found!"));
         }
-
 
         const images = await Image.find({
             uploadedBy: user._id,
